@@ -1,40 +1,38 @@
 function toyproblem()
-maxstep=1000000;
-ave=1;
-xi=zeros(ave,maxstep);
+%maxstep=1000000;
+%ave=1;
+%xi=zeros(ave,maxstep);
 
-xi=mean(xi,1);
-figure;
-bg=0;
+%xi=mean(xi,1);
+%bg=0;
 
-plot(1+bg*maxstep:maxstep,log10(abs(xi(1,1+bg*maxstep:maxstep)+1+10^(-20))),'Color',[0.1 1 0],'LineWidth',1);
-hold on;
-
-xlabel('number of iteration','Fontsize',12);
-ylabel('lg(x-x^*)','Fontsize',12);
-hold off;
-slope=(log10(abs(xi(maxstep)))-log10(abs(xi(maxstep/10))))/maxstep*10/9;
+%plot(1+bg*maxstep:maxstep,log10(abs(xi(1,1+bg*maxstep:maxstep)+1+10^(-20))),'Color',[0.1 1 0],'LineWidth',1);
+%hold on;
+%xlabel('number of iteration','Fontsize',12);
+%ylabel('lg(x-x^*)','Fontsize',12);
+%hold off;
+%slope=(log10(abs(xi(maxstep)))-log10(abs(xi(maxstep/10))))/maxstep*10/9;
 
 plot_map()
 end
 
 function plot_map()
-maxstep=20000;
-a=21;
+maxstep=1000000;
+a=41;
 b=30;
-beta2_conv=zeros(a*b);
-beta2_div=zeros(a*b);
-C_conv=zeros(a*b);
-C_div=zeros(a*b);
-temp=24;
+beta2_conv=zeros(a*b,1);
+beta2_div=zeros(a*b,1);
+C_conv=zeros(a*b,1);
+C_div=zeros(a*b,1);
+temp=10;
 st_c=1;
 st_d=1;
     for i=1:40
-    for C=1:31
+    for C=2:(b+2)
             beta2=1-10^(-i/temp);
-            xi=zeros(maxstep);
+            xi=zeros(maxstep,1);
             [~,~,xi]=reddiexample(maxstep,C,beta2);
-            terminal=sum(log10(abs(xi(maxstep/2:maxstep)+1)))/maxstep*2;
+            terminal=sum(log10(abs(xi(maxstep*0.75:maxstep)+1)))/maxstep*4;
             if terminal<-2
                 beta2_conv(st_c)= i/temp;
                 C_conv(st_c)=C;
@@ -54,11 +52,13 @@ st_d=1;
     plot(beta2_conv,C_conv,'o');
     hold on;
     plot(beta2_div,C_div,'+');
-    xlabel('-lg(1-beta_2)','Fontsize',12);
-    ylabel('C','Fontsize',12);
+    xlabel('$-\log_{10}(1-\beta_2)$','interpreter','latex','Fontsize',20);
+    ylabel('C','Fontsize',20);
     legend('convergent', 'divergent');
     hold off;
+saveas(gcf, 'result', 'png')
 end
+
 function [vk,gk,xk]=reddiexample(maxstep,C,beta2)
 %C=10;
 eta=1;
@@ -81,7 +81,7 @@ grad=xk(1)*C;
         j=j+1;
         i=mod(j,C);
         %i=ceil(C*rand());
-        if i<=1
+        if i==1
             gr=C;
         else
             gr=-1;
